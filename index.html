@@ -147,8 +147,9 @@
 </div>
 
 <script>
-  const streamURL = "https://ecpro.myradionest.com:1065/stream";
-  const metadataURL = "https://ecpro.myradionest.com:1065/status-json.xsl";
+  const params = new URLSearchParams(window.location.search);
+  const streamURL = params.get("stream") || "https://ecpro.myradionest.com:1065/stream";
+  const metadataURL = params.get("meta") || "https://ecpro.myradionest.com:1065/status-json.xsl";
   const fallbackLogo = "https://i.ibb.co/hFPZYTvM/Fallback-Album-Art.png";
   const apiKey = "123";
 
@@ -234,4 +235,3 @@
 
 </body>
 </html>
-
