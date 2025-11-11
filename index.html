@@ -10,21 +10,13 @@
       font-family: 'Segoe UI', sans-serif;
     }
 
-    #stickyPlayer.dark-theme {
-      background: #000000;
-      color: #ffffff;
-    }
-
-    #stickyPlayer.light-theme {
-      background: #ffffff;
-      color: #000000;
-    }
-
     #stickyPlayer {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
+      background: #0006b8;
+      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -85,6 +77,7 @@
 
     .track-info p {
       margin: 2px 0;
+      font-weight: bold;
     }
 
     .right-side {
@@ -94,12 +87,9 @@
       flex-shrink: 0;
     }
 
-    #volume.dark {
+    #volume {
+      width: 80px;
       accent-color: white;
-    }
-
-    #volume.light {
-      accent-color: black;
     }
 
     .powered {
@@ -112,7 +102,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      font-weight: normal;
+      font-weight: bold;
       transition: background 0.3s;
     }
 
@@ -131,37 +121,25 @@
       text-align: center;
       line-height: 14px;
     }
-
-    #toggleTheme {
-      background-color: transparent;
-      border: 1px solid currentColor;
-      color: inherit;
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 10px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
   </style>
 </head>
 <body>
 
-<div id="stickyPlayer" class="dark-theme">
+<div id="stickyPlayer">
   <div class="player-content">
     <div class="left-side">
       <img id="albumArt" src="https://i.ibb.co/hFPZYTvM/Fallback-Album-Art.png" alt="Album Art" class="albumArt">
       <button id="playPause">▶</button>
       <div class="track-info">
-        <p id="trackTitle">Radio</p>
-        <p id="trackArtist">Radio</p>
+        <p id="trackTitle"><strong>Radio</strong></p>
+        <p id="trackArtist"><strong>Radio</strong></p>
       </div>
     </div>
 
     <div class="right-side">
-      <button id="toggleTheme">Toggle Theme</button>
-      <input type="range" id="volume" min="0" max="1" step="0.01" value="1" class="dark">
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
       <a href="https://myradionest.com" target="_blank" class="powered">
-        Powered by Radio Nest
+        <strong>Powered by Radio Nest</strong>
         <span class="arrow">➔</span>
       </a>
     </div>
@@ -170,9 +148,8 @@
 </div>
 
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const streamURL = params.get("stream") || "https://ecpro.myradionest.com:1065/stream";
-  const metadataURL = params.get("meta") || "https://ecpro.myradionest.com:1065/status-json.xsl";
+  const streamURL = "https://ecpro.myradionest.com:1065/stream";
+  const metadataURL = "https://ecpro.myradionest.com:1065/status-json.xsl";
   const fallbackLogo = "https://i.ibb.co/hFPZYTvM/Fallback-Album-Art.png";
   const apiKey = "123";
 
@@ -183,9 +160,6 @@
   const trackTitle = document.getElementById("trackTitle");
   const trackArtist = document.getElementById("trackArtist");
   const albumArt = document.getElementById("albumArt");
-  const stickyPlayer = document.getElementById("stickyPlayer");
-  const toggleThemeBtn = document.getElementById("toggleTheme");
-  const volumeSlider = document.getElementById("volume");
   let lastSong = "";
 
   function cleanMetadata(str) {
@@ -225,8 +199,8 @@
         if (artist.toLowerCase() === "unknown") artist = "Radio";
         if (title.toLowerCase() === "unknown") title = "Radio";
 
-        trackTitle.textContent = title;
-        trackArtist.textContent = artist;
+        trackTitle.innerHTML = `<strong>${title}</strong>`;
+        trackArtist.innerHTML = `<strong>${artist}</strong>`;
 
         fetchCoverArt(artist);
       })
@@ -254,16 +228,8 @@
     }
   });
 
-  volumeSlider.addEventListener("input", (e) => {
+  document.getElementById("volume").addEventListener("input", (e) => {
     audio.volume = e.target.value;
-  });
-
-  toggleThemeBtn.addEventListener("click", () => {
-    const isDark = stickyPlayer.classList.contains("dark-theme");
-    stickyPlayer.classList.toggle("dark-theme", !isDark);
-    stickyPlayer.classList.toggle("light-theme", isDark);
-    volumeSlider.classList.toggle("dark", !isDark);
-    volumeSlider.classList.toggle("light", isDark);
   });
 </script>
 
