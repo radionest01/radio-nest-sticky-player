@@ -15,14 +15,13 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      background: #0006b8;
-      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 10px 14px;
       box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
       z-index: 9999;
+      transition: background 0.3s, color 0.3s;
     }
 
     .player-content {
@@ -50,7 +49,7 @@
 
     #playPause {
       background: #ffffff;
-      color: #0006b8;
+      color: #000000;
       border: none;
       border-radius: 50%;
       width: 28px;
@@ -89,25 +88,18 @@
 
     #volume {
       width: 80px;
-      accent-color: white;
     }
 
     .powered {
       font-size: 10px;
       text-decoration: none;
-      color: #0006b8;
-      background-color: #f0f0f0;
       padding: 4px 8px;
       border-radius: 16px;
       display: flex;
       align-items: center;
       gap: 5px;
       font-weight: bold;
-      transition: background 0.3s;
-    }
-
-    .powered:hover {
-      background-color: #e0e0e0;
+      transition: background 0.3s, color 0.3s;
     }
 
     .powered .arrow {
@@ -115,11 +107,17 @@
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      background: #0006b8;
-      color: #ffffff;
       font-size: 10px;
       text-align: center;
       line-height: 14px;
+    }
+
+    #themeToggle {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0 6px;
     }
   </style>
 </head>
@@ -142,6 +140,7 @@
         <strong>Powered by Radio Nest</strong>
         <span class="arrow">➔</span>
       </a>
+      <button id="themeToggle" title="Toggle Theme">🌙</button>
     </div>
   </div>
   <audio id="audio" preload="none"></audio>
@@ -160,7 +159,42 @@
   const trackTitle = document.getElementById("trackTitle");
   const trackArtist = document.getElementById("trackArtist");
   const albumArt = document.getElementById("albumArt");
+  const stickyPlayer = document.getElementById("stickyPlayer");
+  const volumeSlider = document.getElementById("volume");
+  const powered = document.querySelector(".powered");
+  const arrow = document.querySelector(".powered .arrow");
+  const themeToggle = document.getElementById("themeToggle");
   let lastSong = "";
+  let currentTheme = "dark";
+
+  function applyTheme(theme) {
+    currentTheme = theme;
+    if (theme === "light") {
+      stickyPlayer.style.backgroundColor = "#ffffff";
+      stickyPlayer.style.color = "#000000";
+      volumeSlider.style.setProperty("accent-color", "black");
+      powered.style.backgroundColor = "#000000";
+      powered.style.color = "#ffffff";
+      arrow.style.backgroundColor = "#ffffff";
+      arrow.style.color = "#000000";
+      themeToggle.textContent = "☀️";
+    } else {
+      stickyPlayer.style.backgroundColor = "#000000";
+      stickyPlayer.style.color = "#ffffff";
+      volumeSlider.style.setProperty("accent-color", "white");
+      powered.style.backgroundColor = "#ffffff";
+      powered.style.color = "#000000";
+      arrow.style.backgroundColor = "#000000";
+      arrow.style.color = "#ffffff";
+      themeToggle.textContent = "🌙";
+    }
+  }
+
+  themeToggle.addEventListener("click", () => {
+    applyTheme(currentTheme === "dark" ? "light" : "dark");
+  });
+
+  applyTheme("dark");
 
   function cleanMetadata(str) {
     return str.replace(/\(.*?\)|\[.*?\]|feat\.|ft\.|\/.*$/gi, "").trim();
@@ -235,3 +269,4 @@
 
 </body>
 </html>
+
