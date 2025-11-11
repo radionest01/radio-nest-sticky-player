@@ -100,6 +100,8 @@
       gap: 5px;
       font-weight: bold;
       transition: background 0.3s, color 0.3s;
+      border: none;
+      cursor: pointer;
     }
 
     .powered .arrow {
@@ -110,14 +112,6 @@
       font-size: 10px;
       text-align: center;
       line-height: 14px;
-    }
-
-    #themeToggle {
-      background: none;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      padding: 0 6px;
     }
   </style>
 </head>
@@ -136,11 +130,14 @@
 
     <div class="right-side">
       <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
-      <a href="https://myradionest.com" target="_blank" class="powered">
+      <a href="https://myradionest.com" target="_blank" class="powered" id="poweredLink">
         <strong>Powered by Radio Nest</strong>
-        <span class="arrow">➔</span>
+        <span class="arrow" id="poweredArrow">➔</span>
       </a>
-      <button id="themeToggle" title="Toggle Theme">🌙</button>
+      <button id="themeToggle" class="powered" title="Toggle Theme">
+        Toggle Theme
+        <span class="arrow" id="themeIcon">🌙</span>
+      </button>
     </div>
   </div>
   <audio id="audio" preload="none"></audio>
@@ -161,9 +158,10 @@
   const albumArt = document.getElementById("albumArt");
   const stickyPlayer = document.getElementById("stickyPlayer");
   const volumeSlider = document.getElementById("volume");
-  const powered = document.querySelector(".powered");
-  const arrow = document.querySelector(".powered .arrow");
+  const poweredLink = document.getElementById("poweredLink");
+  const poweredArrow = document.getElementById("poweredArrow");
   const themeToggle = document.getElementById("themeToggle");
+  const themeIcon = document.getElementById("themeIcon");
   let lastSong = "";
   let currentTheme = "dark";
 
@@ -173,20 +171,24 @@
       stickyPlayer.style.backgroundColor = "#ffffff";
       stickyPlayer.style.color = "#000000";
       volumeSlider.style.setProperty("accent-color", "black");
-      powered.style.backgroundColor = "#000000";
-      powered.style.color = "#ffffff";
-      arrow.style.backgroundColor = "#ffffff";
-      arrow.style.color = "#000000";
-      themeToggle.textContent = "☀️";
+      poweredLink.style.backgroundColor = "#000000";
+      poweredLink.style.color = "#ffffff";
+      poweredArrow.style.backgroundColor = "#ffffff";
+      poweredArrow.style.color = "#000000";
+      themeToggle.style.backgroundColor = "#000000";
+      themeToggle.style.color = "#ffffff";
+      themeIcon.textContent = "☀️";
     } else {
       stickyPlayer.style.backgroundColor = "#000000";
       stickyPlayer.style.color = "#ffffff";
       volumeSlider.style.setProperty("accent-color", "white");
-      powered.style.backgroundColor = "#ffffff";
-      powered.style.color = "#000000";
-      arrow.style.backgroundColor = "#000000";
-      arrow.style.color = "#ffffff";
-      themeToggle.textContent = "🌙";
+      poweredLink.style.backgroundColor = "#ffffff";
+      poweredLink.style.color = "#000000";
+      poweredArrow.style.backgroundColor = "#000000";
+      poweredArrow.style.color = "#ffffff";
+      themeToggle.style.backgroundColor = "#ffffff";
+      themeToggle.style.color = "#000000";
+      themeIcon.textContent = "🌙";
     }
   }
 
@@ -269,4 +271,5 @@
 
 </body>
 </html>
+
 
