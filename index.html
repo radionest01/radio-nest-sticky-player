@@ -15,14 +15,14 @@
       bottom: 0;
       left: 0;
       width: 100%;
+      background: #0006b8;
+      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 10px 14px;
       box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
       z-index: 9999;
-      background: #0006b8; /* default dark blue */
-      color: white;
     }
 
     .player-content {
@@ -88,11 +88,13 @@
 
     #volume {
       width: 80px;
+      accent-color: white;
     }
 
     .powered {
       font-size: 10px;
       text-decoration: none;
+      color: #0006b8;
       background-color: #f0f0f0;
       padding: 4px 8px;
       border-radius: 16px;
@@ -104,7 +106,7 @@
     }
 
     .powered:hover {
-      opacity: 0.9;
+      background-color: #e0e0e0;
     }
 
     .powered .arrow {
@@ -148,6 +150,7 @@
   const params = new URLSearchParams(window.location.search);
   const streamURL = params.get("stream") || "https://ecpro.myradionest.com:1065/stream";
   const metadataURL = params.get("meta") || "https://ecpro.myradionest.com:1065/status-json.xsl";
+  const bgParam = params.get("bg");
   const fallbackLogo = "https://i.ibb.co/hFPZYTvM/Fallback-Album-Art.png";
   const apiKey = "123";
 
@@ -249,11 +252,4 @@
     if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
     let r = Math.min(255, Math.max(0, parseInt(hex.substr(0,2), 16) + amount));
     let g = Math.min(255, Math.max(0, parseInt(hex.substr(2,2), 16) + amount));
-    let b = Math.min(255, Math.max(0, parseInt(hex.substr(4,2), 16) + amount));
-    return `rgb(${r}, ${g}, ${b})`;
-  }
-
-  const bgParam = params.get("bg");
-  if (bgParam) {
-    stickyPlayer.style.backgroundColor = bgParam;
-    const light = isLightColor(bgParam);
+    let b = Math.min(255, Math.max(0
