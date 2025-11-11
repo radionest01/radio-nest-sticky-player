@@ -93,7 +93,6 @@
     .powered {
       font-size: 10px;
       text-decoration: none;
-      color: #0006b8;
       background-color: #f0f0f0;
       padding: 4px 8px;
       border-radius: 16px;
@@ -105,7 +104,7 @@
     }
 
     .powered:hover {
-      background-color: #e0e0e0;
+      opacity: 0.9;
     }
 
     .powered .arrow {
@@ -161,6 +160,7 @@
   const albumArt = document.getElementById("albumArt");
   const stickyPlayer = document.getElementById("stickyPlayer");
   const volumeSlider = document.getElementById("volume");
+  const powered = document.querySelector(".powered");
   let lastSong = "";
 
   function cleanMetadata(str) {
@@ -233,7 +233,6 @@
     audio.volume = e.target.value;
   });
 
-  // Detect light/dark background and adjust text/volume color
   function isLightColor(hex) {
     if (!hex) return false;
     hex = hex.replace('#', '');
@@ -245,14 +244,16 @@
     return brightness > 160;
   }
 
+  function adjustColor(hex, amount) {
+    hex = hex.replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    let r = Math.min(255, Math.max(0, parseInt(hex.substr(0,2), 16) + amount));
+    let g = Math.min(255, Math.max(0, parseInt(hex.substr(2,2), 16) + amount));
+    let b = Math.min(255, Math.max(0, parseInt(hex.substr(4,2), 16) + amount));
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
   const bgParam = params.get("bg");
   if (bgParam) {
     stickyPlayer.style.backgroundColor = bgParam;
     const light = isLightColor(bgParam);
-    stickyPlayer.style.color = light ? "#000000" : "#ffffff";
-    volumeSlider.style.setProperty("accent-color", light ? "black" : "white");
-  }
-</script>
-
-</body>
-</html>
