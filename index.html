@@ -225,7 +225,18 @@
     fetch(metadataURL)
       .then(res => res.json())
       .then(data => {
-        const raw = data?.icestats?.source?.title || "";
+        let raw = "";
+
+        // Icecast format
+        if (data?.icestats?.source?.title) {
+          raw = data.icestats.source.title;
+        }
+
+        // Shoutcast format
+        else if (data?.currentSong) {
+          raw = data.currentSong;
+        }
+
         if (!raw || raw === lastSong) return;
 
         lastSong = raw;
@@ -273,6 +284,7 @@
 
 </body>
 </html>
+
 
 
 
