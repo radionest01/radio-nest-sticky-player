@@ -28,22 +28,34 @@
 
     .player-content {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-between; /* left vs right */
       align-items: center;
       width: 100%;
       max-width: 900px;
     }
 
+    /* Left side: album art, play button, metadata */
     .left-side {
       display: flex;
       align-items: center;
       gap: 12px;
+      min-width: 0;
     }
 
+    /* Right side: volume, theme toggle, powered by */
     .right-side {
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-shrink: 0;
+    }
+
+    #albumArt {
+      width: 50px;
+      height: 50px;
+      border-radius: 4px;
+      object-fit: cover;
+      background-color: #222;
     }
 
     #playPause {
@@ -71,7 +83,10 @@
       display: flex;
       flex-direction: column;
       font-size: 12px;
-      text-align: right;
+      max-width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .track-info p {
@@ -79,10 +94,10 @@
       font-weight: bold;
     }
 
-    /* 🎚️ Volume slider */
+    /* Volume slider */
     #volumeSlider {
       -webkit-appearance: none;
-      width: 100px;
+      width: 110px;
       height: 6px;
       border-radius: 5px;
       background: #1e90ff;
@@ -110,7 +125,7 @@
       cursor: pointer;
     }
 
-    /* 🔘 Toggle Theme button */
+    /* Toggle Theme button */
     #themeToggle {
       background-color: #444;
       color: #fff;
@@ -121,12 +136,9 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
+    #themeToggle:hover { background-color: #666; }
 
-    #themeToggle:hover {
-      background-color: #666;
-    }
-
-    /* 🔵 Powered by Radio Nest button */
+    /* Powered by Radio Nest button */
     #radioNestBtn {
       background-color: #1e90ff;
       color: #fff;
@@ -138,36 +150,21 @@
       text-decoration: none;
       transition: background-color 0.3s ease;
     }
+    #radioNestBtn:hover { background-color: #0d6efd; }
 
-    #radioNestBtn:hover {
-      background-color: #0d6efd;
-    }
-
-    /* 🎨 Album art */
-    #albumArt {
-      width: 50px;
-      height: 50px;
-      border-radius: 4px;
-      object-fit: cover;
-      background-color: #222;
-    }
-
-    /* 🌞 Light theme styles */
+    /* Light theme */
     .light-theme {
       background-color: #fff !important;
       color: #000 !important;
     }
-
     .light-theme #playPause {
       background: #000;
       color: #fff;
     }
-
     .light-theme #themeToggle {
       background-color: #ddd;
       color: #000;
     }
-
     .light-theme #albumArt {
       background-color: #eee;
     }
@@ -177,21 +174,21 @@
 
 <div id="stickyPlayer">
   <div class="player-content">
-    <!-- 🎚️ Left side -->
+    <!-- Left: album art, play, metadata -->
     <div class="left-side">
-      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
-      <button id="themeToggle">Toggle Theme</button>
-      <a id="radioNestBtn" href="https://myradionest.com" target="_blank">Powered by Radio Nest</a>
-    </div>
-
-    <!-- 🎵 Right side -->
-    <div class="right-side">
-      <img id="albumArt" src="" alt="Album Art">
+      <img id="albumArt" src="https://i.ibb.co/ccmTh1kB/ON-Air.png" alt="Album Art">
       <button id="playPause">▶</button>
       <div class="track-info">
         <p id="trackTitle"><strong>Radio</strong></p>
         <p id="trackArtist"><strong>Radio</strong></p>
       </div>
+    </div>
+
+    <!-- Right: volume, theme, powered by -->
+    <div class="right-side">
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+      <button id="themeToggle">Toggle Theme</button>
+      <a id="radioNestBtn" href="https://myradionest.com" target="_blank">Powered by Radio Nest</a>
     </div>
   </div>
   <audio id="audio" preload="none"></audio>
@@ -236,18 +233,19 @@
       trackTitle.innerHTML = `<strong>${title}</strong>`;
       trackArtist.innerHTML = `<strong>${artist}</strong>`;
 
-      // 🎨 Fetch album art from AudioDB
+      // 🎨 Fetch album art from AudioDB (API key: 123)
       const apiKey = "123";
-      const artRes = await fetch(`https://theaudiodb.com/api/v1/json/${apiKey}/searchalbum.php?s=${encodeURIComponent(artist)}&a=${encodeURIComponent(title)}`);
+      const artRes = await fetch(
+        `https://theaudiodb.com/api/v1/json/${apiKey}/searchalbum.php?s=${encodeURIComponent(artist)}&a=${encodeURIComponent(title)}`
+      );
       const artData = await artRes.json();
       const albumThumb = artData?.album?.[0]?.strAlbumThumb;
-      if (albumThumb) {
-        albumArt.src = albumThumb;
-      } else {
-        albumArt.src = ""; // fallback blank
-      }
+
+      // ✅ Use fallback if no album art found
+      albumArt.src = albumThumb || "https://i.ibb.co/ccmTh1kB/ON-Air.png";
     } catch (err) {
       console.error("Metadata fetch failed:", err);
+      albumArt.src = "https://i.ibb.co/ccmTh1kB/ON-Air.png"; // fallback on error
     }
   }
 
@@ -282,3 +280,4 @@
 
 </body>
 </html>
+
