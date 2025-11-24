@@ -27,7 +27,7 @@
 
     .player-content {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-between; /* 👈 pushes left and right sides apart */
       align-items: center;
       width: 100%;
       max-width: 900px;
@@ -37,7 +37,12 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      flex-shrink: 1;
+    }
+
+    .right-side {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     #playPause {
@@ -125,15 +130,18 @@
 
 <div id="stickyPlayer">
   <div class="player-content">
+    <!-- 🎵 Left side -->
     <div class="left-side">
       <button id="playPause">▶</button>
       <div class="track-info">
         <p id="trackTitle"><strong>Radio</strong></p>
         <p id="trackArtist"><strong>Radio</strong></p>
       </div>
-      <!-- 🔊 Volume slider -->
+    </div>
+
+    <!-- 🎚️ Right side -->
+    <div class="right-side">
       <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
-      <!-- 🔵 Powered by Radio Nest button -->
       <a id="radioNestBtn" href="https://myradionest.com" target="_blank">Powered by Radio Nest</a>
     </div>
   </div>
