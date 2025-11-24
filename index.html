@@ -70,7 +70,9 @@
     .track-info p {
       margin: 2px 0;
       font-weight: bold;
-       /* 🎚️ Volume slider styling */
+    }
+
+    /* 🎚️ Volume slider styling */
     #volumeSlider {
       -webkit-appearance: none;
       width: 100px;
@@ -100,6 +102,23 @@
       border: 2px solid #1e90ff;
       cursor: pointer;
     }
+
+    /* 🔵 Powered by Radio Nest button */
+    #radioNestBtn {
+      background-color: #1e90ff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    #radioNestBtn:hover {
+      background-color: #0d6efd; /* Darker blue on hover */
+    }
   </style>
 </head>
 <body>
@@ -112,6 +131,10 @@
         <p id="trackTitle"><strong>Radio</strong></p>
         <p id="trackArtist"><strong>Radio</strong></p>
       </div>
+      <!-- 🔊 Volume slider -->
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+      <!-- 🔵 Powered by Radio Nest button -->
+      <a id="radioNestBtn" href="https://myradionest.com" target="_blank">Powered by Radio Nest</a>
     </div>
   </div>
   <audio id="audio" preload="none"></audio>
@@ -128,6 +151,7 @@
   const playPauseBtn = document.getElementById("playPause");
   const trackTitle = document.getElementById("trackTitle");
   const trackArtist = document.getElementById("trackArtist");
+  const volumeSlider = document.getElementById("volumeSlider");
   let lastSong = "";
 
   function cleanMetadata(str) {
@@ -174,8 +198,12 @@
       playPauseBtn.classList.remove("playing");
     }
   });
+
+  // 🔊 Volume control
+  volumeSlider.addEventListener("input", () => {
+    audio.volume = volumeSlider.value;
+  });
 </script>
 
 </body>
 </html>
-
