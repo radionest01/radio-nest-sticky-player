@@ -6,7 +6,7 @@
   <style>
     body {
       margin: 0;
-      padding-bottom: 60px;
+      padding-bottom: 80px;
       font-family: 'Segoe UI', sans-serif;
     }
 
@@ -20,14 +20,15 @@
       align-items: center;
       padding: 10px 14px;
       box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-      background-color: #000;
+      background-color: #000; /* default dark */
       color: #fff;
       z-index: 9999;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .player-content {
       display: flex;
-      justify-content: space-between; /* 👈 pushes left and right sides apart */
+      justify-content: space-between;
       align-items: center;
       width: 100%;
       max-width: 900px;
@@ -50,9 +51,9 @@
       color: #000000;
       border: none;
       border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      font-size: 14px;
+      width: 36px;
+      height: 36px;
+      font-size: 16px;
       cursor: pointer;
     }
 
@@ -70,6 +71,7 @@
       display: flex;
       flex-direction: column;
       font-size: 12px;
+      text-align: right;
     }
 
     .track-info p {
@@ -77,13 +79,13 @@
       font-weight: bold;
     }
 
-    /* 🎚️ Volume slider styling */
+    /* 🎚️ Volume slider */
     #volumeSlider {
       -webkit-appearance: none;
       width: 100px;
       height: 6px;
       border-radius: 5px;
-      background: #1e90ff; /* DodgerBlue */
+      background: #1e90ff;
       outline: none;
       cursor: pointer;
     }
@@ -108,6 +110,22 @@
       cursor: pointer;
     }
 
+    /* 🔘 Toggle Theme button */
+    #themeToggle {
+      background-color: #444;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #themeToggle:hover {
+      background-color: #666;
+    }
+
     /* 🔵 Powered by Radio Nest button */
     #radioNestBtn {
       background-color: #1e90ff;
@@ -122,7 +140,36 @@
     }
 
     #radioNestBtn:hover {
-      background-color: #0d6efd; /* Darker blue on hover */
+      background-color: #0d6efd;
+    }
+
+    /* 🎨 Album art */
+    #albumArt {
+      width: 50px;
+      height: 50px;
+      border-radius: 4px;
+      object-fit: cover;
+      background-color: #222;
+    }
+
+    /* 🌞 Light theme styles */
+    .light-theme {
+      background-color: #fff !important;
+      color: #000 !important;
+    }
+
+    .light-theme #playPause {
+      background: #000;
+      color: #fff;
+    }
+
+    .light-theme #themeToggle {
+      background-color: #ddd;
+      color: #000;
+    }
+
+    .light-theme #albumArt {
+      background-color: #eee;
     }
   </style>
 </head>
@@ -130,19 +177,21 @@
 
 <div id="stickyPlayer">
   <div class="player-content">
-    <!-- 🎵 Left side -->
+    <!-- 🎚️ Left side -->
     <div class="left-side">
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+      <button id="themeToggle">Toggle Theme</button>
+      <a id="radioNestBtn" href="https://myradionest.com" target="_blank">Powered by Radio Nest</a>
+    </div>
+
+    <!-- 🎵 Right side -->
+    <div class="right-side">
+      <img id="albumArt" src="" alt="Album Art">
       <button id="playPause">▶</button>
       <div class="track-info">
         <p id="trackTitle"><strong>Radio</strong></p>
         <p id="trackArtist"><strong>Radio</strong></p>
       </div>
-    </div>
-
-    <!-- 🎚️ Right side -->
-    <div class="right-side">
-      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
-      <a id="radioNestBtn" href="https://myradionest.com" target="_blank">Powered by Radio Nest</a>
     </div>
   </div>
   <audio id="audio" preload="none"></audio>
@@ -160,33 +209,46 @@
   const trackTitle = document.getElementById("trackTitle");
   const trackArtist = document.getElementById("trackArtist");
   const volumeSlider = document.getElementById("volumeSlider");
+  const albumArt = document.getElementById("albumArt");
+  const themeToggle = document.getElementById("themeToggle");
+  const stickyPlayer = document.getElementById("stickyPlayer");
   let lastSong = "";
 
   function cleanMetadata(str) {
     return str.replace(/\(.*?\)|\[.*?\]|feat\.|ft\.|\/.*$/gi, "").trim();
   }
 
-  function updateMetadata() {
-    fetch(metadataURL)
-      .then(res => res.json())
-      .then(data => {
-        const raw = data?.icestats?.source?.title || "";
-        if (!raw || raw === lastSong) return;
+  async function updateMetadata() {
+    try {
+      const res = await fetch(metadataURL);
+      const data = await res.json();
+      const raw = data?.icestats?.source?.title || "";
+      if (!raw || raw === lastSong) return;
 
-        lastSong = raw;
-        let [artist, title] = raw.split(" - ");
-        artist = cleanMetadata(artist || "Radio");
-        title = cleanMetadata(title || "Radio");
+      lastSong = raw;
+      let [artist, title] = raw.split(" - ");
+      artist = cleanMetadata(artist || "Radio");
+      title = cleanMetadata(title || "Radio");
 
-        if (artist.toLowerCase() === "unknown") artist = "Radio";
-        if (title.toLowerCase() === "unknown") title = "Radio";
+      if (artist.toLowerCase() === "unknown") artist = "Radio";
+      if (title.toLowerCase() === "unknown") title = "Radio";
 
-        trackTitle.innerHTML = `<strong>${title}</strong>`;
-        trackArtist.innerHTML = `<strong>${artist}</strong>`;
-      })
-      .catch(err => {
-        console.error("Metadata fetch failed:", err);
-      });
+      trackTitle.innerHTML = `<strong>${title}</strong>`;
+      trackArtist.innerHTML = `<strong>${artist}</strong>`;
+
+      // 🎨 Fetch album art from AudioDB
+      const apiKey = "123";
+      const artRes = await fetch(`https://theaudiodb.com/api/v1/json/${apiKey}/searchalbum.php?s=${encodeURIComponent(artist)}&a=${encodeURIComponent(title)}`);
+      const artData = await artRes.json();
+      const albumThumb = artData?.album?.[0]?.strAlbumThumb;
+      if (albumThumb) {
+        albumArt.src = albumThumb;
+      } else {
+        albumArt.src = ""; // fallback blank
+      }
+    } catch (err) {
+      console.error("Metadata fetch failed:", err);
+    }
   }
 
   updateMetadata();
@@ -210,6 +272,11 @@
   // 🔊 Volume control
   volumeSlider.addEventListener("input", () => {
     audio.volume = volumeSlider.value;
+  });
+
+  // 🌗 Theme toggle
+  themeToggle.addEventListener("click", () => {
+    stickyPlayer.classList.toggle("light-theme");
   });
 </script>
 
